@@ -5,10 +5,10 @@ const request = require('request-promise-native');
 
 const { PORT = 3000, PRIMARY_URL, SECONDARY_URLS } = process.env;
 
-app.use(bodyParser.raw({ type: '*/*' }));
-
 const commaSeparatedStringToArray = str =>
   String.prototype.split.call(str, ',').map(s => s.trim());
+
+const secondaryUrls = commaSeparatedStringToArray(SECONDARY_URLS);
 
 const proxy = (req, target) =>
   request({
@@ -18,8 +18,10 @@ const proxy = (req, target) =>
     headers: req.headers,
   });
 
+app.use(bodyParser.raw({ type: '*/*' }));
+
 app.all('/', (req, res) => {
-  commaSeparatedStringToArray(SECONDARY_URLS).forEach(url => {
+  secondaryUrls.forEach(url => {
     proxy(req, url).catch(error => {
       console.error(`Unable to proxy request to secondary URL ${url}.`, error);
     });
