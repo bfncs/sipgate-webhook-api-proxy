@@ -1,5 +1,4 @@
-require("dotenv").config();
-
+require('dotenv').config();
 const app = require('express')();
 const bodyParser = require('body-parser');
 const request = require('request-promise-native');
@@ -21,10 +20,9 @@ const proxy = (req, target) =>
 
 app.all('/', (req, res) => {
   commaSeparatedStringToArray(SECONDARY_URLS).forEach(url => {
-    proxy(req, url)
-      .catch(error => {
-        console.error(`Unable to proxy request to secondary URL ${url}.`, error);
-      });
+    proxy(req, url).catch(error => {
+      console.error(`Unable to proxy request to secondary URL ${url}.`, error);
+    });
   });
 
   proxy(req, PRIMARY_URL)
